@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141414">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Melhus Damer">
+<title>Melhus Håndball Damer – Treningsdagbok (demo)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap');
+
+.mhd-root { --red:#D6001C; --red-dark:#A30016; --ink:#141414; --charcoal:#333;
+  --bg:#fff; --surface:#f5f5f6; --line:#e6e6e9; --muted:#6b7280;
+  font-family:'Exo 2',system-ui,sans-serif; color:var(--ink);
+  background:var(--surface); min-height:100%; }
+.mhd-root *{box-sizing:border-box;}
+.mhd-shell{max-width:480px;margin:0 auto;background:var(--bg);min-height:100vh;
+  display:flex;flex-direction:column;box-shadow:0 0 40px rgba(0,0,0,.06);}
+
+/* header */
+.mhd-top{background:var(--ink);color:#fff;padding:14px 18px 0;}
+.mhd-brand{display:flex;align-items:baseline;gap:8px;}
+.mhd-wordmark{font-weight:800;letter-spacing:.04em;font-size:22px;line-height:1;}
+.mhd-wordmark .acc{color:var(--red);}
+.mhd-sub{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:#bdbdc2;margin-top:3px;}
+.mhd-rule{height:4px;background:var(--red);margin-top:12px;}
+.mhd-bar{background:var(--ink);color:#fff;display:flex;align-items:center;
+  justify-content:space-between;padding:10px 18px;}
+.mhd-bar .who{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;}
+.mhd-chip-role{background:var(--red);font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:3px 8px;border-radius:99px;}
+.mhd-logout{background:transparent;border:1px solid #444;color:#ddd;border-radius:8px;
+  padding:6px 10px;font:inherit;font-size:12px;font-weight:600;display:flex;gap:6px;
+  align-items:center;cursor:pointer;}
+.mhd-logout:hover{border-color:var(--red);color:#fff;}
+
+/* generic */
+.mhd-main{padding:18px;flex:1;}
+.mhd-h2{font-weight:800;font-size:18px;margin:0 0 2px;}
+.mhd-lead{color:var(--muted);font-size:13px;margin:0 0 16px;}
+.mhd-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;
+  margin-bottom:14px;}
+.mhd-card.accent{border-top:3px solid var(--red);}
+.mhd-label{display:block;font-weight:600;font-size:12px;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--charcoal);margin:0 0 7px;}
+.mhd-input,.mhd-select,.mhd-text{width:100%;font:inherit;font-size:15px;padding:11px 12px;
+  border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);}
+.mhd-text{min-height:64px;resize:vertical;}
+.mhd-row{margin-bottom:15px;}
+.mhd-chips{display:flex;flex-wrap:wrap;gap:7px;}
+.mhd-chip{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 0;
+  flex:1 1 0;min-width:42px;text-align:center;font:inherit;font-weight:600;font-size:14px;
+  cursor:pointer;color:var(--charcoal);transition:.12s;}
+.mhd-chip:hover{border-color:#c9c9cf;}
+.mhd-chip.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.mhd-chip.on.red{background:var(--red);border-color:var(--red);}
+.mhd-quick{display:flex;gap:7px;margin-top:8px;}
+.mhd-quick button{flex:1;border:1px dashed var(--line);background:var(--surface);border-radius:8px;
+  padding:7px 0;font:inherit;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;}
+.mhd-quick button:hover{border-color:var(--red);color:var(--red);}
+.mhd-btn{width:100%;background:var(--red);color:#fff;border:0;border-radius:11px;padding:14px;
+  font:inherit;font-weight:700;font-size:15px;cursor:pointer;display:flex;justify-content:center;
+  align-items:center;gap:8px;}
+.mhd-btn:hover{background:var(--red-dark);}
+.mhd-btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);}
+.mhd-btn.ghost:hover{border-color:var(--red);color:var(--red);}
+.mhd-mood{display:flex;gap:7px;}
+.mhd-mood button{flex:1;font-size:22px;background:#fff;border:1px solid var(--line);
+  border-radius:10px;padding:7px 0;cursor:pointer;filter:grayscale(.7);opacity:.6;}
+.mhd-mood button.on{filter:none;opacity:1;border-color:var(--red);background:#fff5f6;}
+.mhd-toggle{display:flex;align-items:center;justify-content:space-between;
+  border:1px solid var(--line);border-radius:10px;padding:11px 13px;}
+.mhd-toggle .sw{width:44px;height:26px;border-radius:99px;background:#d4d4d8;position:relative;
+  transition:.15s;cursor:pointer;flex:none;}
+.mhd-toggle .sw.on{background:var(--red);}
+.mhd-toggle .sw i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:99px;
+  background:#fff;transition:.15s;}
+.mhd-toggle .sw.on i{left:21px;}
+
+/* entries */
+.mhd-entry{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);}
+.mhd-entry:last-child{border-bottom:0;}
+.mhd-date{flex:none;width:46px;text-align:center;}
+.mhd-date .d{font-weight:800;font-size:18px;line-height:1;}
+.mhd-date .m{font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.08em;}
+.mhd-entry .body{flex:1;}
+.mhd-entry .ttl{font-weight:700;font-size:14px;}
+.mhd-entry .meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.mhd-entry .note{font-size:12px;color:var(--charcoal);margin-top:5px;font-style:italic;}
+.mhd-loadtag{flex:none;text-align:right;}
+.mhd-loadtag .v{font-weight:800;font-size:16px;}
+.mhd-loadtag .l{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
+.mhd-sore{display:inline-block;font-size:10px;font-weight:700;color:var(--red);
+  border:1px solid var(--red);border-radius:6px;padding:1px 6px;margin-top:4px;}
+
+/* stat tiles + readiness */
+.mhd-tiles{display:flex;gap:10px;margin-bottom:14px;}
+.mhd-tile{flex:1;background:var(--ink);color:#fff;border-radius:12px;padding:12px;}
+.mhd-tile .v{font-weight:800;font-size:22px;line-height:1;}
+.mhd-tile .l{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#b9b9bf;margin-top:4px;}
+.mhd-ready{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;
+  border-radius:99px;padding:3px 9px;}
+.mhd-meter{height:8px;border-radius:99px;background:var(--surface);overflow:hidden;margin-top:8px;}
+.mhd-meter i{display:block;height:100%;border-radius:99px;}
+
+/* coach roster */
+.mhd-pcard{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;margin-bottom:10px;cursor:pointer;background:#fff;transition:.12s;}
+.mhd-pcard:hover{border-color:var(--red);box-shadow:0 2px 10px rgba(214,0,28,.07);}
+.mhd-av{flex:none;width:40px;height:40px;border-radius:99px;background:var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;}
+.mhd-pcard .nm{font-weight:700;font-size:15px;}
+.mhd-pcard .sm{font-size:12px;color:var(--muted);}
+.mhd-grow{flex:1;}
+
+/* login */
+.mhd-login{flex:1;display:flex;flex-direction:column;justify-content:center;padding:30px 24px 50px;}
+.mhd-login .crest{width:88px;height:88px;border-radius:20px;background:#fff;color:var(--ink);
+  border:1px solid var(--line);box-shadow:0 6px 20px rgba(0,0,0,.07);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;padding:14px;}
+.mhd-login .crest img{max-width:100%;max-height:100%;object-fit:contain;}
+.mhd-logo-badge{height:38px;width:38px;border-radius:9px;background:#fff;flex:none;
+  display:flex;align-items:center;justify-content:center;padding:5px;}
+.mhd-logo-badge img{max-width:100%;max-height:100%;object-fit:contain;display:block;}
+.mhd-login h1{text-align:center;font-weight:800;font-size:24px;margin:0 0 2px;}
+.mhd-login p{text-align:center;color:var(--muted);font-size:13px;margin:0 0 28px;}
+.mhd-rolebtn{width:100%;text-align:left;border:1px solid var(--line);border-radius:14px;
+  padding:16px;margin-bottom:12px;background:#fff;cursor:pointer;display:flex;gap:14px;
+  align-items:center;transition:.12s;}
+.mhd-rolebtn:hover{border-color:var(--red);transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.06);}
+.mhd-rolebtn .ic{flex:none;width:44px;height:44px;border-radius:11px;background:var(--surface);
+  display:flex;align-items:center;justify-content:center;color:var(--red);}
+.mhd-rolebtn .t{font-weight:700;font-size:16px;}
+.mhd-rolebtn .s{font-size:12px;color:var(--muted);margin-top:2px;}
+.mhd-foot{text-align:center;font-size:11px;color:#a1a1aa;margin-top:18px;}
+
+.mhd-back{display:flex;align-items:center;gap:5px;background:none;border:0;font:inherit;
+  font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;padding:0;margin-bottom:12px;}
+.mhd-back:hover{color:var(--red);}
+.mhd-section-h{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--charcoal);margin:18px 0 10px;}
+.mhd-tabs{display:flex;gap:6px;background:var(--surface);border-radius:11px;padding:4px;margin-bottom:16px;}
+.mhd-tab{flex:1;border:0;background:transparent;font:inherit;font-weight:700;font-size:13px;
+  padding:9px 0;border-radius:8px;cursor:pointer;color:var(--muted);}
+.mhd-tab.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.mhd-subchips{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 12px;}
+.mhd-subchip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);
+  border:1px solid var(--line);border-radius:99px;padding:5px 6px 5px 12px;font-size:13px;font-weight:600;}
+.mhd-subchip button{border:0;background:#e4e4e7;color:#52525b;width:19px;height:19px;border-radius:99px;
+  font:inherit;font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.mhd-subchip button:hover{background:var(--red);color:#fff;}
+.mhd-empty{font-size:13px;color:#a1a1aa;}
+.mhd-addrow{display:flex;gap:8px;}
+.mhd-addrow .mhd-input{flex:1;}
+.mhd-add{width:auto;padding:11px 16px;white-space:nowrap;}
+
+.mhd-bars{display:flex;align-items:flex-end;gap:3px;height:130px;margin-top:12px;}
+.mhd-bcol{flex:1;height:100%;display:flex;align-items:flex-end;}
+.mhd-bbar{width:100%;border-radius:3px 3px 0 0;min-height:2px;}
+html,body{margin:0;padding:0;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const Dumbbell = () => "🏋️";
+const Users = () => "👥";
+const LogOut = () => null;
+const ChevronLeft = () => "← ";
+const Check = () => null;
+const Moon = () => null;
+const Activity = () => null;
+
+
+/* ---------- konfig ---------- *
+ * Pek denne på den OFFISIELLE MIL-logofila (legg f.eks. logo-mil.svg i /public).
+ * Tom streng = vis nøytral plassholder-emblem til den ekte fila er på plass.
+ * NB: bruk klubbens vektorfil – ikke en avtegnet kopi (jf. MILs profilhåndbok). */
+const LOGO_URL = "data:image/png;base64,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"; // offisiell MIL-logo (bytt til "/logo-mil.svg" i prod)
+
+function Logo({ variant }) {
+  const [failed, setFailed] = useState(false);
+  const ok = LOGO_URL && !failed;
+  const img = <img src={LOGO_URL} alt="Melhus Idrettslag" onError={() => setFailed(true)} />;
+  if (variant === "crest") {
+    return ok ? img : <Dumbbell size={34} />;
+  }
+  // header: sort merke på hvit brikke (header er nesten svart)
+  return <span className="mhd-logo-badge">{ok ? img : <Dumbbell size={20} color="#141414" />}</span>;
+}
+
+/* ---------- helpers ---------- */
+const TYPES = ["Lagtrening", "Kamp", "Styrke", "Kondisjon", "Egentrening", "Annet"];
+// Standard underkategorier per type – kan endres av trener i Kategorier-fanen
+const DEFAULT_CATS = {
+  Lagtrening: ["Teknikk", "Taktikk", "Spillsekvenser", "Keepertrening"],
+  Kamp: ["Seriekamp", "Treningskamp", "Cup"],
+  Styrke: ["Helkropp", "Overkropp", "Underkropp", "Kjerne", "Skadeforebygging"],
+  Kondisjon: ["Intervall", "Langkjøring", "Rolig økt", "Sprint / spenst"],
+  Egentrening: ["Skudd", "Pasning", "Fysikk"],
+  Annet: [],
+};
+const MONTHS = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "okt", "nov", "des"];
+const iso = (d) => d.toISOString().slice(0, 10);
+const fromISO = (s) => new Date(s + "T00:00:00");
+const load = (e) => e.durationMin * e.rpe;
+const daysAgo = (n) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - n); return d; };
+
+function readiness(entries, playerId) {
+  const now = daysAgo(0).getTime();
+  const within = (e, days) => (now - fromISO(e.date).getTime()) / 86400000 < days;
+  const mine = entries.filter((e) => e.playerId === playerId);
+  const acute = mine.filter((e) => within(e, 7)).reduce((s, e) => s + load(e), 0);
+  const chronic = mine.filter((e) => within(e, 28)).reduce((s, e) => s + load(e), 0) / 4;
+  if (chronic === 0) return { ratio: null, label: "Ikke nok data", color: "#9ca3af", bg: "#f3f4f6", pct: 0 };
+  const r = acute / chronic;
+  let label = "Balansert", color = "#1b8a4b", bg = "#e7f5ec";
+  if (r <= 0.8) { label = "Lav belastning"; color = "#2563eb"; bg = "#e8effd"; }
+  else if (r > 1.5) { label = "Høy – overbelastning"; color = "#D6001C"; bg = "#fdeaec"; }
+  else if (r > 1.3) { label = "Forhøyet"; color = "#b45309"; bg = "#fdf3e3"; }
+  return { ratio: r, label, color, bg, pct: Math.min(100, (r / 2) * 100) };
+}
+
+function weeklyLoad(entries, playerId) {
+  return entries.filter((e) => e.playerId === playerId && (daysAgo(0).getTime() - fromISO(e.date).getTime()) / 86400000 < 7)
+    .reduce((s, e) => s + load(e), 0);
+}
+
+function dailySeries(entries, playerId, days = 14) {
+  const map = {};
+  for (let i = days - 1; i >= 0; i--) {
+    const d = daysAgo(i);
+    map[iso(d)] = { day: `${d.getDate()}.${d.getMonth() + 1}`, belastning: 0, key: iso(d) };
+  }
+  entries.filter((e) => e.playerId === playerId).forEach((e) => {
+    if (map[e.date]) map[e.date].belastning += load(e);
+  });
+  return Object.values(map);
+}
+
+/* ---------- seed data ---------- */
+const PLAYERS = [
+  { id: "p1", name: "Ingrid Aune", pos: "Bakspiller" },
+  { id: "p2", name: "Marte Lien", pos: "Kantspiller" },
+  { id: "p3", name: "Selma Rønning", pos: "Strek" },
+];
+function seedEntries() {
+  const out = [];
+  let id = 1;
+  const plan = {
+    p1: [60, 0, 50, 0, 70, 0, 90, 55, 0, 50, 0, 65, 0, 80, 60, 0, 55, 0, 60, 0, 75, 0, 60, 50, 0, 60, 0, 70],
+    p2: [50, 0, 45, 0, 55, 0, 70, 45, 0, 0, 50, 0, 0, 60, 40, 0, 45, 0, 50, 0, 0, 0, 90, 80, 0, 70, 0, 60],
+    p3: [55, 0, 50, 0, 60, 0, 65, 50, 0, 55, 0, 0, 0, 55, 50, 0, 0, 0, 45, 0, 60, 0, 50, 50, 0, 55, 0, 60],
+  };
+  Object.entries(plan).forEach(([pid, arr]) => {
+    arr.forEach((mins, i) => {
+      if (mins === 0) return;
+      const day = daysAgo(27 - i);
+      const rpe = 4 + ((i + mins) % 5); // 4–8
+      const type = mins >= 80 ? "Kamp" : (i % 3 === 0 ? "Styrke" : "Lagtrening");
+      const subType = type === "Kamp" ? "Seriekamp" : type === "Styrke" ? "Skadeforebygging" : "Teknikk";
+      out.push({
+        id: "e" + id++, playerId: pid, date: iso(day),
+        type, subType,
+        durationMin: mins, rpe, mood: 3 + (i % 3), sleepHours: 6 + (i % 3),
+        note: mins >= 80 ? "Kamp – tung andre omgang." : "",
+        soreness: pid === "p2" && i >= 25,
+      });
+    });
+  });
+  return out;
+}
+
+/* ---------- small components ---------- */
+function ReadinessPill({ r }) {
+  return (
+    <span className="mhd-ready" style={{ color: r.color, background: r.bg }}>
+      <Activity size={12} />{r.label}{r.ratio ? ` · ${r.ratio.toFixed(2)}` : ""}
+    </span>
+  );
+}
+function LoadChart({ data }) {
+  const max = Math.max(1, ...data.map((d) => d.belastning));
+  return (
+    <div className="mhd-bars">
+      {data.map((d, i) => (
+        <div className="mhd-bcol" key={i} title={d.day + ": " + d.belastning}>
+          <div className="mhd-bbar" style={{ height: (d.belastning / max) * 100 + "%", background: d.belastning > 450 ? "#D6001C" : "#141414" }} />
+        </div>
+      ))}
+    </div>
+  );
+}
+function EntryList({ entries }) {
+  if (!entries.length) return <p style={{ color: "#9ca3af", fontSize: 13 }}>Ingen økter registrert ennå.</p>;
+  return entries.slice().sort((a, b) => b.date.localeCompare(a.date)).map((e) => {
+    const d = fromISO(e.date);
+    return (
+      <div className="mhd-entry" key={e.id}>
+        <div className="mhd-date"><div className="d">{d.getDate()}</div><div className="m">{MONTHS[d.getMonth()]}</div></div>
+        <div className="body">
+          <div className="ttl">{e.type}{e.subType ? <span style={{ color: "var(--muted)", fontWeight: 600 }}> · {e.subType}</span> : null}{e.desc ? <span style={{ color: "var(--muted)", fontWeight: 600 }}> · {e.desc}</span> : null}</div>
+          <div className="meta">{e.durationMin} min · intensitet {e.rpe}/10 · søvn {e.sleepHours}t</div>
+          {e.note && <div className="note">“{e.note}”</div>}
+          {e.soreness && <span className="mhd-sore">Øm / vondt</span>}
+        </div>
+        <div className="mhd-loadtag"><div className="v">{load(e)}</div><div className="l">belast.</div></div>
+      </div>
+    );
+  });
+}
+
+/* ---------- log form ---------- */
+function LogForm({ onSave, categories }) {
+  const today = iso(daysAgo(0));
+  const [date, setDate] = useState(today);
+  const [type, setType] = useState("Lagtrening");
+  const [sub, setSub] = useState("");
+  const [dur, setDur] = useState(60);
+  const [rpe, setRpe] = useState(6);
+  const [mood, setMood] = useState(3);
+  const [sleep, setSleep] = useState(7);
+  const [note, setNote] = useState("");
+  const [sore, setSore] = useState(false);
+  const [desc, setDesc] = useState("");
+  const moods = ["😞", "😕", "😐", "🙂", "😄"];
+  const subs = categories[type] || [];
+  const needsDesc = type === "Annet" || sub === "Annet";
+
+  const changeType = (t) => { setType(t); setSub(""); setDesc(""); };
+
+  const save = () => {
+    onSave({ id: "e" + Date.now(), date, type, subType: sub || null, desc: needsDesc ? desc.trim() : "", durationMin: Number(dur), rpe, mood: mood + 1, sleepHours: Number(sleep), note: note.trim(), soreness: sore });
+    setNote(""); setSore(false); setRpe(6); setMood(3); setDate(today); setSub(""); setDesc("");
+  };
+
+  return (
+    <div className="mhd-card accent">
+      <h3 className="mhd-h2" style={{ fontSize: 16 }}>Logg økt</h3>
+      <p className="mhd-lead" style={{ marginBottom: 14 }}>Tar under ett minutt.</p>
+
+      <div className="mhd-row">
+        <span className="mhd-label">Dato</span>
+        <input className="mhd-input" type="date" value={date} max={today}
+          onChange={(e) => setDate(e.target.value)} />
+        <div className="mhd-quick">
+          <button onClick={() => setDate(today)}>I dag</button>
+          <button onClick={() => setDate(iso(daysAgo(1)))}>I går</button>
+        </div>
+      </div>
+
+      <div className="mhd-row">
+        <span className="mhd-label">Type</span>
+        <select className="mhd-select" value={type} onChange={(e) => changeType(e.target.value)}>
+          {TYPES.map((t) => <option key={t}>{t}</option>)}
+        </select>
+      </div>
+
+      {subs.length > 0 && (
+        <div className="mhd-row">
+          <span className="mhd-label">Underkategori</span>
+          <select className="mhd-select" value={sub} onChange={(e) => setSub(e.target.value)}>
+            <option value="">– velg –</option>
+            {subs.map((s) => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+      )}
+
+      {needsDesc && (
+        <div className="mhd-row">
+          <span className="mhd-label">Beskrivelse (Annet)</span>
+          <input className="mhd-input" value={desc} onChange={(e) => setDesc(e.target.value)}
+            placeholder="Hva slags økt var det?" />
+        </div>
+      )}
+
+      <div className="mhd-row">
+        <span className="mhd-label">Varighet (min)</span>
+        <input className="mhd-input" type="number" value={dur} onChange={(e) => setDur(e.target.value)} />
+        <div className="mhd-quick">{[30, 45, 60, 90, 120].map((m) => <button key={m} onClick={() => setDur(m)}>{m}</button>)}</div>
+      </div>
+
+      <div className="mhd-row">
+        <span className="mhd-label">Intensitet (RPE 1–10)</span>
+        <div className="mhd-chips">
+          {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+            <button key={n} className={"mhd-chip red" + (rpe === n ? " on" : "")} onClick={() => setRpe(n)}>{n}</button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mhd-row">
+        <span className="mhd-label">Form i dag</span>
+        <div className="mhd-mood">
+          {moods.map((m, i) => <button key={i} className={mood === i ? "on" : ""} onClick={() => setMood(i)}>{m}</button>)}
+        </div>
+      </div>
+
+      <div className="mhd-row">
+        <span className="mhd-label"><Moon size={12} style={{ verticalAlign: -1 }} /> Søvn i natt (timer)</span>
+        <input className="mhd-input" type="number" value={sleep} onChange={(e) => setSleep(e.target.value)} />
+      </div>
+
+      <div className="mhd-row">
+        <span className="mhd-label">Notat (valgfritt)</span>
+        <textarea className="mhd-text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Hvordan kjentes økta?" />
+      </div>
+
+      <div className="mhd-row">
+        <div className="mhd-toggle">
+          <div><div style={{ fontWeight: 600, fontSize: 14 }}>Vondt eller øm?</div>
+            <div style={{ fontSize: 12, color: "#6b7280" }}>Gir treneren et varsel</div></div>
+          <div className={"sw" + (sore ? " on" : "")} onClick={() => setSore(!sore)}><i /></div>
+        </div>
+      </div>
+
+      <button className="mhd-btn" onClick={save}><Check size={18} /> Lagre økt</button>
+    </div>
+  );
+}
+
+/* ---------- player screen ---------- */
+function PlayerScreen({ player, entries, onSave, categories }) {
+  const mine = entries.filter((e) => e.playerId === player.id);
+  const r = readiness(entries, player.id);
+  const wk = weeklyLoad(entries, player.id);
+  return (
+    <div className="mhd-main">
+      <h2 className="mhd-h2">Hei, {player.name.split(" ")[0]}</h2>
+      <p className="mhd-lead">Hold treningsdagboka oppdatert – det hjelper deg å holde deg skadefri.</p>
+
+      <div className="mhd-card">
+        <span className="mhd-label">Din belastning</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div><div style={{ fontWeight: 800, fontSize: 26 }}>{wk}</div>
+            <div style={{ fontSize: 11, color: "#6b7280" }}>siste 7 dager</div></div>
+          <ReadinessPill r={r} />
+        </div>
+        <div className="mhd-meter"><i style={{ width: r.pct + "%", background: r.color }} /></div>
+      </div>
+
+      <LogForm onSave={(e) => onSave({ ...e, playerId: player.id })} categories={categories} />
+
+      <div className="mhd-card">
+        <span className="mhd-label">Siste 14 dager</span>
+        <LoadChart data={dailySeries(entries, player.id)} />
+      </div>
+
+      <div className="mhd-card">
+        <span className="mhd-label">Dine økter</span>
+        <EntryList entries={mine} />
+      </div>
+    </div>
+  );
+}
+
+/* ---------- coach screens ---------- */
+function RosterView({ entries, onOpen }) {
+  const sumWeek = PLAYERS.reduce((s, p) => s + weeklyLoad(entries, p.id), 0);
+  const sessions = entries.filter((e) => (daysAgo(0).getTime() - fromISO(e.date).getTime()) / 86400000 < 7).length;
+  const flagged = PLAYERS.filter((p) => { const r = readiness(entries, p.id); return r.ratio && r.ratio > 1.3; }).length;
+  return (
+    <>
+      <h2 className="mhd-h2">Laget</h2>
+      <p className="mhd-lead">Oversikt over treningsbelastning denne uka.</p>
+      <div className="mhd-tiles">
+        <div className="mhd-tile"><div className="v">{sessions}</div><div className="l">økter / uke</div></div>
+        <div className="mhd-tile"><div className="v">{Math.round(sumWeek / PLAYERS.length)}</div><div className="l">snitt belast.</div></div>
+        <div className="mhd-tile" style={{ background: flagged ? "#D6001C" : "#141414" }}>
+          <div className="v">{flagged}</div><div className="l">forhøyet risiko</div></div>
+      </div>
+      <div className="mhd-section-h">Spillere</div>
+      {PLAYERS.map((p) => {
+        const r = readiness(entries, p.id);
+        return (
+          <div className="mhd-pcard" key={p.id} onClick={() => onOpen(p)}>
+            <div className="mhd-av">{p.name.split(" ").map((n) => n[0]).join("")}</div>
+            <div className="mhd-grow"><div className="nm">{p.name}</div><div className="sm">{p.pos} · {weeklyLoad(entries, p.id)} belast./uke</div></div>
+            <ReadinessPill r={r} />
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+function CoachHome({ entries, onOpen, categories, setCategories }) {
+  const [tab, setTab] = useState("roster");
+  return (
+    <div className="mhd-main">
+      <div className="mhd-tabs">
+        <button className={"mhd-tab" + (tab === "roster" ? " on" : "")} onClick={() => setTab("roster")}>Laget</button>
+        <button className={"mhd-tab" + (tab === "admin" ? " on" : "")} onClick={() => setTab("admin")}>Kategorier</button>
+      </div>
+      {tab === "roster"
+        ? <RosterView entries={entries} onOpen={onOpen} />
+        : <AdminPanel categories={categories} setCategories={setCategories} />}
+    </div>
+  );
+}
+
+function TypeEditor({ type, subs, onChange }) {
+  const [val, setVal] = useState("");
+  const add = () => {
+    const v = val.trim();
+    if (v && !subs.includes(v)) onChange([...subs, v]);
+    setVal("");
+  };
+  return (
+    <div className="mhd-card">
+      <span className="mhd-label">{type}</span>
+      <div className="mhd-subchips">
+        {subs.length === 0 && <span className="mhd-empty">Ingen underkategorier ennå</span>}
+        {subs.map((s) => (
+          <span className="mhd-subchip" key={s}>{s}
+            <button onClick={() => onChange(subs.filter((x) => x !== s))} aria-label={"Fjern " + s}>×</button>
+          </span>
+        ))}
+      </div>
+      <div className="mhd-addrow">
+        <input className="mhd-input" value={val} placeholder="Ny underkategori"
+          onChange={(e) => setVal(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") add(); }} />
+        <button className="mhd-btn ghost mhd-add" onClick={add}>Legg til</button>
+      </div>
+    </div>
+  );
+}
+
+function AdminPanel({ categories, setCategories }) {
+  return (
+    <>
+      <h2 className="mhd-h2">Kategorier</h2>
+      <p className="mhd-lead">Definer underkategorier for hver type. Spillerne velger blant disse når de logger en økt.</p>
+      {TYPES.map((t) => (
+        <TypeEditor key={t} type={t} subs={categories[t] || []}
+          onChange={(subs) => setCategories({ ...categories, [t]: subs })} />
+      ))}
+    </>
+  );
+}
+function CoachPlayer({ player, entries, onBack }) {
+  const mine = entries.filter((e) => e.playerId === player.id);
+  const r = readiness(entries, player.id);
+  return (
+    <div className="mhd-main">
+      <button className="mhd-back" onClick={onBack}><ChevronLeft size={16} /> Tilbake til laget</button>
+      <h2 className="mhd-h2">{player.name}</h2>
+      <p className="mhd-lead">{player.pos}</p>
+      <div className="mhd-card">
+        <span className="mhd-label">Belastning siste 7 dager</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ fontWeight: 800, fontSize: 26 }}>{weeklyLoad(entries, player.id)}</div>
+          <ReadinessPill r={r} />
+        </div>
+        <div className="mhd-meter"><i style={{ width: r.pct + "%", background: r.color }} /></div>
+      </div>
+      <div className="mhd-card">
+        <span className="mhd-label">Siste 14 dager</span>
+        <LoadChart data={dailySeries(entries, player.id)} />
+      </div>
+      <div className="mhd-card">
+        <span className="mhd-label">Treningsdagbok</span>
+        <EntryList entries={mine} />
+      </div>
+    </div>
+  );
+}
+
+/* ---------- login ---------- */
+function Login({ onPick }) {
+  return (
+    <div className="mhd-login">
+      <div className="crest"><Logo variant="crest" /></div>
+      <h1>Treningsdagbok</h1>
+      <p>Melhus Håndball Damer</p>
+      <button className="mhd-rolebtn" onClick={() => onPick("spiller")}>
+        <div className="ic"><Dumbbell size={22} /></div>
+        <div><div className="t">Jeg er spiller</div><div className="s">Logg økter og følg din egen belastning</div></div>
+      </button>
+      <button className="mhd-rolebtn" onClick={() => onPick("trener")}>
+        <div className="ic"><Users size={22} /></div>
+        <div><div className="t">Jeg er trener</div><div className="s">Se spillernes dagbøker og lagstatistikk</div></div>
+      </button>
+      <div className="mhd-foot">MelhushandballDamer.no · demo med eksempeldata</div>
+    </div>
+  );
+}
+
+/* ---------- app ---------- */
+function App() {
+  const [role, setRole] = useState(null);          // null | 'spiller' | 'trener'
+  const [me, setMe] = useState(PLAYERS[0]);          // innlogget spiller (demo)
+  const [entries, setEntries] = useState(seedEntries);
+  const [categories, setCategories] = useState(DEFAULT_CATS);
+  const [viewPlayer, setViewPlayer] = useState(null);
+
+  const logout = () => { setRole(null); setViewPlayer(null); };
+  const addEntry = (e) => setEntries((prev) => [...prev, e]);
+
+  return (
+    <div className="mhd-root">
+      <style>{STYLES}</style>
+      <div className="mhd-shell">
+        <div className="mhd-top">
+          <div className="mhd-brand">
+            <Logo />
+            <span className="mhd-wordmark">MELHUS<span className="acc">.</span></span>
+            <span style={{ fontWeight: 600, fontSize: 13, color: "#bdbdc2" }}>HÅNDBALL DAMER</span>
+          </div>
+          <div className="mhd-sub">Treningsdagbok</div>
+          <div className="mhd-rule" />
+        </div>
+
+        {role && (
+          <div className="mhd-bar">
+            <div className="who">
+              <span className="mhd-chip-role">{role}</span>
+              {role === "spiller" ? me.name : "Trener"}
+            </div>
+            {role === "spiller" && (
+              <select value={me.id} onChange={(e) => setMe(PLAYERS.find((p) => p.id === e.target.value))}
+                style={{ background: "#222", color: "#fff", border: "1px solid #444", borderRadius: 8, padding: "5px 8px", font: "inherit", fontSize: 12 }}>
+                {PLAYERS.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+              </select>
+            )}
+            <button className="mhd-logout" onClick={logout}><LogOut size={13} /> Logg ut</button>
+          </div>
+        )}
+
+        {!role && <Login onPick={setRole} />}
+        {role === "spiller" && <PlayerScreen player={me} entries={entries} onSave={addEntry} categories={categories} />}
+        {role === "trener" && !viewPlayer && <CoachHome entries={entries} onOpen={setViewPlayer} categories={categories} setCategories={setCategories} />}
+        {role === "trener" && viewPlayer && <CoachPlayer player={viewPlayer} entries={entries} onBack={() => setViewPlayer(null)} />}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+</script>
+</body>
+</html>
